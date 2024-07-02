@@ -53,7 +53,7 @@ describe('ArgoCDServer tests', function () {
     await argocdServer().installArgoCDCommand('');
 
     expect(mockedDownloadTool).toHaveBeenCalledWith(
-      'https://github.com/argoproj/argo-cd/releases/download/v2.4.0/argocd-linux-amd64',
+      'https://github.com/argoproj/argo-cd/releases/download/v2.11.3/argocd-linux-amd64',
       'bin/argo'
     );
   });
@@ -103,7 +103,7 @@ describe('ArgoCDServer tests', function () {
     expect(mockedExecCommand).toBeCalledTimes(appCollection().apps.length);
     expect(mockedExecCommand).toHaveBeenCalledWith(
       `bin/argo app diff ${appOne().metadata.name} --local=${
-        appOne().spec.source.path
+        appOne().spec.sources[0].path
       } --exit-code=false --auth-token=tokenfake --server=argocd.example `
     );
   });
@@ -134,13 +134,15 @@ function appOne(): App {
       name: 'app-one'
     },
     spec: {
-      source: {
-        repoURL: 'https://github.com/argocd-diff-action/app-one',
-        path: 'deploy/app-one',
-        targetRevision: 'HEAD',
-        helm: {},
-        kustomize: {}
-      }
+      sources: [
+        {
+          repoURL: 'https://github.com/argocd-diff-action/app-one',
+          path: 'deploy/app-one',
+          targetRevision: 'HEAD',
+          helm: {},
+          kustomize: {}
+        }
+      ]
     },
     status: {
       sync: {
@@ -156,13 +158,15 @@ function appTwo(): App {
       name: 'app-two'
     },
     spec: {
-      source: {
-        repoURL: 'https://github.com/argocd-diff-action/app-two',
-        path: 'deploy/app-two',
-        targetRevision: 'master',
-        helm: {},
-        kustomize: {}
-      }
+      sources: [
+        {
+          repoURL: 'https://github.com/argocd-diff-action/app-two',
+          path: 'deploy/app-two',
+          targetRevision: 'master',
+          helm: {},
+          kustomize: {}
+        }
+      ]
     },
     status: {
       sync: {
@@ -178,13 +182,15 @@ function appThree(): App {
       name: 'app-three'
     },
     spec: {
-      source: {
-        repoURL: 'https://github.com/argocd-diff-action/app-three',
-        path: 'deploy/app-three',
-        targetRevision: '1.2.1',
-        helm: {},
-        kustomize: {}
-      }
+      sources: [
+        {
+          repoURL: 'https://github.com/argocd-diff-action/app-three',
+          path: 'deploy/app-three',
+          targetRevision: '1.2.1',
+          helm: {},
+          kustomize: {}
+        }
+      ]
     },
     status: {
       sync: {
@@ -199,7 +205,7 @@ function appCollection(): AppCollection {
 }
 
 function argocdServer(): ArgoCDServer {
-  return new ArgoCDServer('argocd.example', 'tokenfake');
+  return new ArgoCDServer('argocd.example', 'tokenfake', '3');
 }
 
 function exceCommandAppLocalDiffAppOfApp(): ExecResult {
@@ -239,7 +245,7 @@ function exceCommandAppRevisionDiff(): ExecResult {
     <     helm.sh/chart: app-three-1.2.1
     ---
     >     helm.sh/chart: app-three-1.2.2
-    
+
     ===== apps/Deployment default/cd-slack-bot ======
     14c14
     <     helm.sh/chart: app-three-1.2.1

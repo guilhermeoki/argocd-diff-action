@@ -15,6 +15,7 @@ const ARGOCD_SERVER_FQDN = core.getInput('argocd-server-fqdn');
 const ARGOCD_TOKEN = core.getInput('argocd-token');
 const VERSION = core.getInput('argocd-version');
 const EXTRA_CLI_ARGS = core.getInput('argocd-extra-cli-args');
+const SOURCE_POSITION = core.getInput('argocd-source-position');
 const EXCLUDE_PATHS = core.getInput('argocd-exclude-paths').split(',');
 const octokit = github.getOctokit(githubToken);
 
@@ -87,9 +88,7 @@ _Updated at ${new Date().toLocaleString('en-CA', { timeZone: 'America/Toronto' }
     repo
   });
 
-  const existingComment = commentsResponse.data.find(
-    d => d.body?.includes(headerPrefix) ?? false
-  );
+  const existingComment = commentsResponse.data.find(d => d.body?.includes(headerPrefix) ?? false);
 
   // Existing comments should be updated even if there are no changes this round in order to indicate that
   if (existingComment) {
@@ -111,7 +110,12 @@ _Updated at ${new Date().toLocaleString('en-CA', { timeZone: 'America/Toronto' }
 }
 
 async function run(): Promise<void> {
-  const argocdServer = new ArgoCDServer(ARGOCD_SERVER_FQDN, ARGOCD_TOKEN, EXTRA_CLI_ARGS);
+  const argocdServer = new ArgoCDServer(
+    ARGOCD_SERVER_FQDN,
+    ARGOCD_TOKEN,
+    SOURCE_POSITION,
+    EXTRA_CLI_ARGS
+  );
   await argocdServer.installArgoCDCommand(VERSION, ARCH);
 
   let appAllCollection = await argocdServer.getAppCollection();

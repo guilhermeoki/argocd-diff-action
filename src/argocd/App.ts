@@ -1,13 +1,10 @@
+import { Source } from './Source';
+
 export interface App {
   metadata: { name: string };
   spec: {
-    source?: {
-      repoURL: string;
-      path?: string;
-      targetRevision: string;
-      kustomize?: Object;
-      helm?: Object;
-    };
+    source?: Source;
+    sources: Source[];
   };
   status: {
     sync: {

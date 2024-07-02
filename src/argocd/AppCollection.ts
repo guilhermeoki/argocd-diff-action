@@ -14,11 +14,7 @@ export class AppCollection {
 
     return new AppCollection(
       this.apps.filter(app => {
-        return (
-          app.spec.source !== undefined &&
-          app.spec.source.path !== undefined &&
-          !excludedPaths.includes(app.spec.source.path)
-        );
+        return app.spec.sources !== undefined;
       })
     );
   }
@@ -27,7 +23,10 @@ export class AppCollection {
     return new AppCollection(
       this.apps.filter(app => {
         console.log(app);
-        return app.spec.source !== undefined && app.spec.source.repoURL.includes(repoMatch);
+        return (
+          app.spec.sources !== undefined &&
+          app.spec.sources.some(source => source.repoURL.includes(repoMatch))
+        );
       })
     );
   }
@@ -36,7 +35,8 @@ export class AppCollection {
     return new AppCollection(
       this.apps.filter(app => {
         return (
-          app.spec.source !== undefined && targetRevisions.includes(app.spec.source.targetRevision)
+          app.spec.sources !== undefined &&
+          app.spec.sources.some(source => targetRevisions.includes(source.targetRevision))
         );
       })
     );

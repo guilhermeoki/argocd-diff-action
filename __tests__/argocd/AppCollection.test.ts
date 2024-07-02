@@ -39,13 +39,15 @@ function appOne(): App {
       name: 'app-one'
     },
     spec: {
-      source: {
-        repoURL: 'https://github.com/argocd-diff-action/app-one',
-        path: 'deploy/app-one',
-        targetRevision: 'HEAD',
-        helm: {},
-        kustomize: {}
-      }
+      sources: [
+        {
+          repoURL: 'https://github.com/argocd-diff-action/app-one',
+          path: 'deploy/app-one',
+          targetRevision: 'HEAD',
+          helm: {},
+          kustomize: {}
+        }
+      ]
     },
     status: {
       sync: {
@@ -61,13 +63,15 @@ function appTwo(): App {
       name: 'app-two'
     },
     spec: {
-      source: {
-        repoURL: 'https://github.com/argocd-diff-action/app-two',
-        path: 'deploy/app-two',
-        targetRevision: 'master',
-        helm: {},
-        kustomize: {}
-      }
+      sources: [
+        {
+          repoURL: 'https://github.com/argocd-diff-action/app-two',
+          path: 'deploy/app-two',
+          targetRevision: 'master',
+          helm: {},
+          kustomize: {}
+        }
+      ]
     },
     status: {
       sync: {

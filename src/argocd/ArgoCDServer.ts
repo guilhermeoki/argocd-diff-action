@@ -14,10 +14,12 @@ export class ArgoCDServer {
   extraCommandArgs: string;
   fqdn: string;
   token: string;
+  source_positions: string;
 
-  constructor(fqdn: string, token: string, extraCommandArgs = '') {
+  constructor(fqdn: string, token: string, source_positions: string, extraCommandArgs = '') {
     this.fqdn = fqdn;
     this.token = token;
+    this.source_positions = source_positions;
     this.extraCommandArgs = extraCommandArgs;
   }
 
@@ -47,8 +49,15 @@ export class ArgoCDServer {
     return { app, diff: '' } as Diff;
   }
 
-  async getAppRevisionDiff(app: App, targetRevision: string): Promise<Diff> {
-    return this.getAppDiff(app, [`--revision=${targetRevision}`]);
+  async getAppRevisionDiff(
+    app: App,
+    targetRevision: string,
+    sourcePositions: string
+  ): Promise<Diff> {
+    return this.getAppDiff(app, [
+      `--revisions=${targetRevision}`,
+      `--source-positions=${sourcePositions}`
+    ]);
   }
 
   async getAppDiff(app: App, params: string[] = []): Promise<Diff> {
@@ -124,7 +133,7 @@ export class ArgoCDServer {
       let app = appCollection.getAppByName(appTargetRevision.appName);
       if (app) {
         appCollectionDiffPromises.push(
-          this.getAppRevisionDiff(app, appTargetRevision.targetRevision)
+          this.getAppRevisionDiff(app, appTargetRevision.targetRevision, this.source_positions)
         );
       } else {
         core.warning(
